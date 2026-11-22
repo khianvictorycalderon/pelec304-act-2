@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<main class="flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-white/90 p-8 text-center shadow-2xl shadow-slate-950/30 ring-1 ring-white/60 backdrop-blur-xl">
+        <h1 class="text-3xl font-bold tracking-tight">Welcome</h1>
+        <p class="mt-1 text-sm text-slate-600">A simple Django authentication demo.</p>
+        <hr class="my-6 border-slate-300">
+
+        {% if user.is_authenticated %}
+            <p class="mb-4 text-sm text-slate-600">You're signed in as <span class="font-medium text-slate-900">{{ user.username }}</span>.</p>
+            <a href="{% url 'dashboard' %}" class="block w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600/30">Go to dashboard</a>
+        {% else %}
+            <div class="space-y-3">
+                <a href="{% url 'login' %}" class="block w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600/30">Login</a>
+                <a href="{% url 'register' %}" class="block w-full rounded-xl border border-slate-300 bg-white/70 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-slate-400/30">Register</a>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

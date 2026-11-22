@@ -1,0 +1,8 @@
+<header class="topbar">
+    <a href="{% url 'root' %}" class="brand"><span class="brand-mark">E</span> Online Enrollment</a>
+    <nav class="topbar-actions">
+        <a class="btn btn-ghost" href="{% url 'root' %}">Home</a>
+        {% if is_admin %}<a class="btn btn-primary" href="{% url 'students' %}">Admin dashboard</a>
+        {% else %}<a class="btn btn-ghost" href="{% url 'login' %}">Admin sign in</a>{% endif %}
+    </nav>
+</header>

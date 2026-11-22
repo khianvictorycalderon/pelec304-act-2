@@ -1,0 +1,27 @@
+{% extends 'console/base.html' %}
+{% block title %}Sign in{% endblock %}
+{% block body_class %}auth{% endblock %}
+{% block body %}
+<main class="auth-card">
+    <div class="brand"><span class="brand-mark">E</span> Enrollment Admin</div>
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to manage student records.</p>
+
+    {% if error %}<div class="alert" role="alert">{{ error }}</div>{% endif %}
+
+    <form method="post" class="form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" autofocus required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+    </form>
+
+    <div class="auth-links">
+        <a href="{% url 'root' %}">← Back to home</a>
+        <a href="{% url 'add_student' %}">Enroll a student</a>
+    </div>
+</main>
+{% endblock %}

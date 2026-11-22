@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<header class="mx-auto flex max-w-3xl items-center justify-between p-4 sm:p-6">
+    <a href="{% url 'home' %}" class="text-sm font-medium text-white/90 transition hover:text-white">Home</a>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="rounded-xl bg-white/90 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg shadow-slate-950/20 backdrop-blur-xl transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-white/40">Logout</button>
+    </form>
+</header>
+
+<main class="mx-auto max-w-3xl px-4 pb-10 sm:px-6">
+    <section class="rounded-3xl bg-white/90 p-8 shadow-2xl shadow-slate-950/30 ring-1 ring-white/60 backdrop-blur-xl">
+        <h1 class="text-3xl font-bold tracking-tight">Hello, {{ user.first_name|default:user.username }}</h1>
+        <p class="mt-1 text-sm text-slate-600">You're signed in. Here are your account details.</p>
+        <hr class="my-6 border-slate-300">
+
+        <dl class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-slate-200">
+                <dt class="text-sm text-slate-500">Username</dt>
+                <dd class="mt-1 font-semibold">{{ user.username }}</dd>
+            </div>
+            <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-slate-200">
+                <dt class="text-sm text-slate-500">Full name</dt>
+                <dd class="mt-1 font-semibold">{{ user.get_full_name|default:"—" }}</dd>
+            </div>
+            <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-slate-200">
+                <dt class="text-sm text-slate-500">Birth date</dt>
+                <dd class="mt-1 font-semibold">{{ user.profile.birth_date|date:"F j, Y"|default:"—" }}</dd>
+            </div>
+            <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-slate-200">
+                <dt class="text-sm text-slate-500">Member since</dt>
+                <dd class="mt-1 font-semibold">{{ user.date_joined|date:"F j, Y" }}</dd>
+            </div>
+        </dl>
+    </section>
+</main>
+{% endblock %}

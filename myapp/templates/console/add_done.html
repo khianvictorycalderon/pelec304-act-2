@@ -1,0 +1,16 @@
+{% extends 'console/base.html' %}
+{% block title %}Student added{% endblock %}
+{% block body_class %}public{% endblock %}
+{% block body %}
+{% include 'console/_public_header.html' %}
+<main class="public-wrap done">
+    <div class="done-icon">✓</div>
+    <h1>Submission received</h1>
+    <p class="muted"><strong>{{ name }}</strong> was added with student number <strong>{{ student_no }}</strong>. Status: Pending.</p>
+    <div class="form-actions center">
+        <a class="btn btn-primary" href="{% url 'add_student' %}">Add another student</a>
+        <a class="btn btn-ghost" href="{% url 'root' %}">Back to home</a>
+        {% if is_admin %}<a class="btn btn-ghost" href="{% url 'students' %}">View all students</a>{% endif %}
+    </div>
+</main>
+{% endblock %}

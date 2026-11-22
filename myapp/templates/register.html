@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<main class="flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-2xl rounded-3xl bg-white/90 p-8 shadow-2xl shadow-slate-950/30 ring-1 ring-white/60 backdrop-blur-xl">
+        <header class="text-center">
+            <h1 class="text-3xl font-bold tracking-tight">Register</h1>
+            <p class="mt-1 text-sm text-slate-600">Create your account here!</p>
+        </header>
+        <hr class="my-6 border-slate-300">
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {% include '_form_errors.html' %}
+            <div class="grid gap-4 sm:grid-cols-2">
+                {% include '_field.html' with field=form.first_name %}
+                {% include '_field.html' with field=form.last_name %}
+                {% include '_field.html' with field=form.username %}
+                {% include '_field.html' with field=form.birth_date %}
+                {% include '_field.html' with field=form.password1 %}
+                {% include '_field.html' with field=form.password2 %}
+            </div>
+            <button type="submit" class="mt-2 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600/30">Register</button>
+        </form>
+
+        <p class="mt-5 text-center text-xs text-slate-500">
+            Already have an account? <a href="{% url 'login' %}" class="font-medium text-blue-600 underline-offset-2 hover:underline">Login</a>
+        </p>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'console/base.html' %}
+{% block title %}{% if selected %}{{ selected.display_name }}{% else %}Students{% endif %}{% endblock %}
+{% block body_class %}app{% if selected %} has-selection{% endif %}{% endblock %}
+
+{% block body %}
+<header class="topbar">
+    <a href="{% url 'students' %}" class="brand"><span class="brand-mark">E</span> Enrollment Admin</a>
+    <div class="topbar-actions">
+        <a class="btn btn-ghost" href="{% url 'root' %}">Home</a>
+        <a class="btn btn-primary" href="{% url 'add_student' %}">+ Add student</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost">Sign out</button>
+        </form>
+    </div>
+</header>
+
+<div class="layout">
+    <!-- Student list -->
+    <aside class="list-pane">
+        <div class="list-head">
+            <h2>Students <span class="count">{{ student_list|length }}{% if student_list|length != total %} / {{ total }}{% endif %}</span></h2>
+            <form method="get" class="filters" action="{% if selected %}{% url 'student_detail' selected.pk %}{% else %}{% url 'students' %}{% endif %}">
+                <input type="search" name="q" value="{{ q }}" placeholder="Search name or student no.">
+                <div class="filter-row">
+                    <select name="section" onchange="this.form.submit()">
+                        <option value="">All sections</option>
+                        {% for s in sections %}<option value="{{ s.pk }}" {% if section_id == s.pk|stringformat:"d" %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+                    </select>
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="">Any status</option>
+                        {% for value, label in statuses %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <ul class="student-list">
+            {% for s in student_list %}
+            <li>
+                <a href="{% url 'student_detail' s.pk %}{% if querystring %}?{{ querystring }}{% endif %}"
+                   class="student-row {% if selected and selected.pk == s.pk %}active{% endif %}">
+                    <span class="avatar">{{ s.initials }}</span>
+                    <span class="student-meta">
+                        <span class="student-name">{{ s.last_name }}, {{ s.first_name }}</span>
+                        <span class="student-sub">{{ s.student_no }}{% if s.section %} · {{ s.section.name }}{% endif %}</span>
+                    </span>
+                    <span class="badge badge-{{ s.status }}">{{ s.get_status_display }}</span>
+                </a>
+            </li>
+            {% empty %}
+            <li class="empty">No students match your filters.</li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <!-- Profile -->
+    <main class="detail-pane">
+        {% if selected %}
+        {% with s=selected %}
+        <a class="back-link" href="{% url 'students' %}{% if querystring %}?{{ querystring }}{% endif %}">← All students</a>
+
+        <section class="profile-hero">
+            <span class="avatar avatar-lg">{{ s.initials }}</span>
+            <div>
+                <h1>{{ s.display_name }}</h1>
+                <p class="muted">{{ s.student_no }}{% if s.section %} · {{ s.section.program }} · {{ s.section.year_level }} – {{ s.section.name }}{% endif %}</p>
+            </div>
+            <span class="badge badge-{{ s.status }} badge-lg">{{ s.get_status_display }}</span>
+        </section>
+
+        <div class="cards">
+            <section class="card">
+                <h3>Personal Information</h3>
+                <dl>
+                    <div><dt>Full name</dt><dd>{{ s.full_name }}</dd></div>
+                    <div><dt>Sex</dt><dd>{{ s.get_sex_display }}</dd></div>
+                    <div><dt>Date of birth</dt><dd>{{ s.birth_date|date:"F j, Y" }} ({{ s.age }} yrs)</dd></div>
+                    <div><dt>Place of birth</dt><dd>{{ s.birth_place|default:"—" }}</dd></div>
+                    <div><dt>Nationality</dt><dd>{{ s.nationality|default:"—" }}</dd></div>
+                    <div><dt>Religion</dt><dd>{{ s.religion|default:"—" }}</dd></div>
+                </dl>
+            </section>
+
+            <section class="card">
+                <h3>Contact Information</h3>
+                <dl>
+                    <div><dt>Email</dt><dd>{% if s.email %}<a href="mailto:{{ s.email }}">{{ s.email }}</a>{% else %}—{% endif %}</dd></div>
+                    <div><dt>Phone</dt><dd>{{ s.phone|default:"—" }}</dd></div>
+                    <div class="wide"><dt>Address</dt><dd>{{ s.address|default:"—" }}</dd></div>
+                </dl>
+            </section>
+
+            <section class="card">
+                <h3>Family &amp; Guardian</h3>
+                <dl>
+                    <div><dt>Father</dt><dd>{{ s.father_name|default:"—" }}</dd></div>
+                    <div><dt>Mother</dt><dd>{{ s.mother_name|default:"—" }}</dd></div>
+                    <div><dt>Guardian</dt><dd>{{ s.guardian_name|default:"—" }}</dd></div>
+                    <div><dt>Relationship</dt><dd>{{ s.guardian_relationship|default:"—" }}</dd></div>
+                    <div><dt>Guardian phone</dt><dd>{{ s.guardian_phone|default:"—" }}</dd></div>
+                    <div><dt>Occupation</dt><dd>{{ s.guardian_occupation|default:"—" }}</dd></div>
+                </dl>
+            </section>
+
+            <section class="card">
+                <h3>Background Information</h3>
+                <dl>
+                    <div class="wide"><dt>Previous school</dt><dd>{{ s.previous_school|default:"—" }}</dd></div>
+                    <div class="wide"><dt>School address</dt><dd>{{ s.previous_school_address|default:"—" }}</dd></div>
+                    <div><dt>Last level completed</dt><dd>{{ s.last_level_completed|default:"—" }}</dd></div>
+                    <div><dt>General average</dt><dd>{{ s.general_average|default:"—" }}</dd></div>
+                    <div class="wide"><dt>Honors / awards</dt><dd>{{ s.honors|default:"—" }}</dd></div>
+                </dl>
+            </section>
+
+            <section class="card">
+                <h3>Enrollment</h3>
+                <dl>
+                    <div><dt>Status</dt><dd>{{ s.get_status_display }}</dd></div>
+                    <div><dt>Date enrolled</dt><dd>{{ s.date_enrolled|date:"F j, Y"|default:"—" }}</dd></div>
+                    <div><dt>Program</dt><dd>{{ s.section.program|default:"—" }}</dd></div>
+                    <div><dt>Year level</dt><dd>{{ s.section.year_level|default:"—" }}</dd></div>
+                    <div><dt>Section</dt><dd>{{ s.section.name|default:"—" }}</dd></div>
+                    <div><dt>Adviser</dt><dd>{{ s.section.adviser|default:"—" }}</dd></div>
+                    <div><dt>School year</dt><dd>{{ s.section.school_year|default:"—" }}</dd></div>
+                </dl>
+            </section>
+
+            {% if s.notes %}
+            <section class="card">
+                <h3>Notes</h3>
+                <p class="notes">{{ s.notes|linebreaksbr }}</p>
+            </section>
+            {% endif %}
+        </div>
+        {% endwith %}
+        {% else %}
+        <div class="placeholder">
+            <div class="placeholder-icon">👤</div>
+            <h2>Select a student</h2>
+            <p class="muted">Pick someone from the list to view their full profile.</p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'console/base.html' %}
+{% block title %}Welcome{% endblock %}
+{% block body_class %}auth{% endblock %}
+{% block body %}
+<main class="auth-card home-card">
+    <div class="brand"><span class="brand-mark">E</span> Online Enrollment</div>
+    <h1>Welcome</h1>
+    <p class="muted">Enroll a new student, or sign in to manage existing records.</p>
+
+    <div class="stack">
+        <a class="btn btn-primary btn-block" href="{% url 'add_student' %}">+ Enroll a student</a>
+        {% if is_admin %}
+        <a class="btn btn-secondary btn-block" href="{% url 'students' %}">Go to admin dashboard</a>
+        {% else %}
+        <a class="btn btn-secondary btn-block" href="{% url 'login' %}">Admin sign in</a>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
